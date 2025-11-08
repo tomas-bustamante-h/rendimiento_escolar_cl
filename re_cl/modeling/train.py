@@ -22,33 +22,41 @@ def main(
     logger.info("Iniciando el entrenamiento del modelo...")
 
     df = pd.read_csv(input_path)
+    logger.info(f"Dataset de entrenamiento cargado con {len(df)} filas.")
 
-    # Definir variables categóricas y numéricas
-    # Asumiendo que las columnas de dependencia y región ya están en el dataset
+    # --- 1. Definición de Variables ---
+    # Se definen las variables predictoras (features) y la variable objetivo (target).
     categorical_features = [col for col in df.columns if 'COD_DEPE' in col or 'COD_REG_RBD' in col]
-    categorical_features.append('GEN_ALU') # Asumiendo una columna de género
+    if 'GEN_ALU' in df.columns:
+        categorical_features.append('GEN_ALU')
     numerical_features = ['ASISTENCIA']
-    
     target = 'PROM_GRAL'
 
     X = df[categorical_features + numerical_features]
     y = df[target]
 
+    # --- 2. División de Datos ---
+    # Se divide el dataset en conjuntos de entrenamiento y prueba.
+    # En este caso, solo usamos el de entrenamiento para ajustar el modelo final.
     X_train, _, y_train, _ = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Crear un preprocesador para las variables categóricas
+    # --- 3. Preprocesamiento y Pipeline ---
+    # Se crea un transformador para aplicar One-Hot Encoding a las variables categóricas.
+    # `handle_unknown='ignore'` es útil si el modelo en producción encuentra categorías no vistas.
     preprocessor = ColumnTransformer(
         transformers=[
             ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
         ], remainder='passthrough')
 
-    # Crear el pipeline de modelado
+    # Se define el pipeline que primero preprocesa los datos y luego ajusta el regresor.
     pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                ('regressor', LinearRegression())])
 
+    # --- 4. Entrenamiento y Guardado ---
     logger.info("Ajustando el modelo de regresión lineal...")
     pipeline.fit(X_train, y_train)
 
+    # Se asegura de que el directorio del modelo exista y guarda el pipeline entrenado.
     model_path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(pipeline, model_path)
     logger.success(f"Modelo entrenado y guardado en {model_path}")

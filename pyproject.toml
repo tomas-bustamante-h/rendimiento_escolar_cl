@@ -1,0 +1,48 @@
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "re_cl"
+version = "0.0.1"
+description = "An\u00e1lisis del rendimiento escolar en Chile a nivel alumno, usando PROM_GRAL, asistencia y variables de contexto (g\u00e9nero, dependencia, regi\u00f3n)."
+authors = [
+  { name = "Tom\u00e1s Bustamante" },
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License"
+]
+dependencies = [
+    "ipython",
+    "jupyterlab",
+    "loguru",
+    "matplotlib",
+    "notebook",
+    "numpy",
+    "pandas",
+    "pip",
+    "pytest",
+    "python-dotenv",
+    "ruff",
+    "scikit-learn",
+    "tqdm",
+    "typer",
+]
+requires-python = "~=3.12.0"
+
+
+[tool.ruff]
+line-length = 99
+src = ["re_cl"]
+include = ["pyproject.toml", "re_cl/**/*.py"]
+
+[tool.ruff.lint]
+extend-select = ["I"]  # Add import sorting
+
+[tool.ruff.lint.isort]
+known-first-party = ["re_cl"]
+force-sort-within-sections = true
+

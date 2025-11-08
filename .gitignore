@@ -1,5 +1,47 @@
-# Data
+# Data files and directories
 /data/
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.hdf5
+*.h5
+*.json
+*.xml
+*.sqlite
+*.db
+*.sql
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.gz
+
+# Model files
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.pb
+*.model
+
+# R files
+.Rhistory
+.RData
+.Rproj.user
+
+# Output directories
+logs/
+outputs/
+results/
+models/
+checkpoints/
 
 # Mac OS-specific storage files
 .DS_Store

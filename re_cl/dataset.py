@@ -1,28 +1,42 @@
 from pathlib import Path
-
+import pandas as pd
 from loguru import logger
-from tqdm import tqdm
 import typer
 
 from re_cl.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
 
 app = typer.Typer()
 
-
 @app.command()
 def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
     input_path: Path = RAW_DATA_DIR / "dataset.csv",
     output_path: Path = PROCESSED_DATA_DIR / "dataset.csv",
-    # ----------------------------------------------
 ):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Processing dataset...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Processing dataset complete.")
-    # -----------------------------------------
+    """
+    Carga los datos crudos, realiza una limpieza básica y los guarda en el
+    directorio de datos procesados.
+    """
+    logger.info("Iniciando el procesamiento del dataset...")
+
+    try:
+        df = pd.read_csv(input_path)
+        logger.info(f"Dataset cargado desde {input_path} con {len(df)} filas.")
+
+        # Aquí iría la lógica de limpieza. Por ejemplo:
+        # - Manejo de valores nulos
+        # - Conversión de tipos de datos
+        # - Renombrar columnas si es necesario
+        df.dropna(subset=['PROM_GRAL', 'ASISTENCIA'], inplace=True)
+        logger.info(f"Filas después de eliminar nulos en PROM_GRAL y ASISTENCIA: {len(df)}")
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(output_path, index=False)
+        logger.success(f"Dataset procesado y guardado en {output_path}")
+
+    except FileNotFoundError:
+        logger.error(f"El archivo de entrada no fue encontrado en: {input_path}")
+    except Exception as e:
+        logger.error(f"Ocurrió un error durante el procesamiento: {e}")
 
 
 if __name__ == "__main__":
